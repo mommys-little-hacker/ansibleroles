@@ -1,0 +1,12 @@
+---
+# Конфигурация ansible-lint
+exclude_paths:
+  - .cache/
+  - .molecule/
+
+# Правила, которые отключены полностью (не добавлять без обсуждения)
+skip_list: []
+
+# Предупреждения (не ломают CI)
+warn_list:
+  - experimental

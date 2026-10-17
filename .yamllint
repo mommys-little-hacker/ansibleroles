@@ -1,0 +1,17 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 120
+  comments:
+    min-spaces-from-content: 1
+  truthy:
+    check-keys: false
+  indentation:
+    indent-sequences: consistent
+
+ignore: |
+  .cache/
+  .git/
+  .molecule/

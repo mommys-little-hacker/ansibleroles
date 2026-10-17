@@ -1,0 +1,9 @@
+---
+# Пример плейбука с использованием роли common.
+# Запуск: ansible-playbook playbooks/example.yml -i <inventory>
+- name: Пример базовой настройки сервера
+  hosts: all
+  become: true
+
+  roles:
+    - common

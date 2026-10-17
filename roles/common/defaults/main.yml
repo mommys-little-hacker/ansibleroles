@@ -1,0 +1,10 @@
+---
+# Переменные по умолчанию роли common.
+# Конфигурируемое — здесь, с префиксом common_.
+common_packages:
+  - curl
+  - wget
+  - vim
+  - htop
+
+common_timezone: Etc/UTC

@@ -1,0 +1,5 @@
+---
+# Обработчики роли common.
+- name: Update system tzdata
+  ansible.builtin.command: dpkg-reconfigure -f noninteractive tzdata
+  changed_when: true

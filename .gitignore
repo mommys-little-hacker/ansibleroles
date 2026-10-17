@@ -1,0 +1,26 @@
+# Ansible
+*.retry
+.cache/
+.molecule/
+ansible-lint-results.json
+
+# Галакси-кэш и артефакты
+collections/
+*.tar.gz
+
+# Python / venv
+.ansibleroles/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Секреты и локальные конфиги
+*.vault-pass
+vault_pass*
+.env
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
