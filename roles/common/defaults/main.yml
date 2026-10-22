@@ -1,10 +1,43 @@
 ---
-# Переменные по умолчанию роли common.
-# Конфигурируемое — здесь, с префиксом common_.
-common_packages:
-  - curl
-  - wget
-  - vim
-  - htop
+timezone: UTC
 
-common_timezone: Etc/UTC
+users_create: []
+
+users_delete: []
+
+cron_env:
+  MAILTO: root@localhost
+  SHELL: /usr/bin/bash
+
+common_pkgs:
+  - apt-file
+  - aptitude
+  - bash-completion
+  - ca-certificates
+  - cloud-init
+  - curl
+  - dnsmasq
+  - dnsutils
+  - gnupg2
+  - jq
+  - less
+  - logrotate
+  - mailutils
+  - man-db
+  - nano
+  - net-tools
+  - nmap
+  - postfix
+  - psmisc
+  - python3-setuptools
+  - rsync
+  - rsyslog
+  - sudo
+  - tcpdump
+  - wget
+
+extra_pkgs: []
+
+#systemd_default_limits:
+  #Manager:
+    #DefaultLimitNOFILE: infinity

@@ -1,11 +1,50 @@
 ---
-# Основная логика роли common.
-- name: Install base packages
-  ansible.builtin.package:
-    name: "{{ common_packages }}"
-    state: present
-
 - name: Set timezone
   community.general.timezone:
-    name: "{{ common_timezone }}"
-  notify: Update system tzdata
+    name: "{{ timezone }}"
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ common_pkgs + extra_pkgs }}"
+    state: present
+    update_cache: no
+  when: >
+    common_pkgs is not subset(ansible_facts.packages)
+    or extra_pkgs is not subset(ansible_facts.packages)
+- name: Set up cron vars
+  ansible.builtin.cron:
+    env: yes
+    user: "root"
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_items: "{{ cron_env | dict2items }}"
+- name: Set default systemd limits
+  ansible.builtin.template:
+    src: system.conf
+    dest: /etc/systemd/system.conf
+    mode: "0644"
+  notify: daemon-reload
+  when: systemd_default_limits is defined
+- name: Set .bashrc for root
+  ansible.builtin.copy:
+    src: "files/bashrc"
+    dest: "/root/.bashrc"
+    mode: "0644"
+- name: Adjust network settings
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-ipv4.conf
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items:
+    - name: net.core.somaxconn
+      value: "65535"
+    - name: net.ipv4.tcp_max_syn_backlog
+      value: "65535"
+- name: Create users
+  ansible.builtin.include_tasks: "user-create.yml"
+  with_items: "{{ users_create }}"
+- name: Delete users
+  ansible.builtin.include_tasks: "user-delete.yml"
+  with_items: "{{ users_delete }}"

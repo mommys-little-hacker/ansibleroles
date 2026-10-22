@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: certbot
+  author: Maxim Vasilev <admin@qwertys.ru>
+  description: Set up certbot and obtain TLS certificate from Let's Encrypt
+  min_ansible_version: "2.10"
+  license: EULA
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - bionic
+allow_duplicates: no
+dependencies:
+  - name: basic

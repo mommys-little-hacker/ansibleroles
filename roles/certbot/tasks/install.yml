@@ -1,0 +1,12 @@
+---
+- name: Ensure all required packages are installed
+  ansible.builtin.apt:
+    name:
+      - virtualenv
+      - cron
+    update_cache: no
+- name: Create virtualenv and install certbot
+  ansible.builtin.pip:
+    name: "{{ certbot_pip }}"
+    virtualenv: "/opt/certbot"
+    virtualenv_python: "/usr/bin/python3"

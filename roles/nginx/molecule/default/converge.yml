@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    nginx_basic_auth:
+      filename: basic_auth
+      users:
+        test0: qwerty
+        test1: foobar
+  tasks:
+    - name: "Include nginx"
+      ansible.builtin.include_role:
+        name: "nginx"

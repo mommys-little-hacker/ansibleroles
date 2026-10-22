@@ -1,0 +1,62 @@
+---
+- name: Create nginx systemd unit dir
+  ansible.builtin.file:
+    name: /etc/systemd/system/nginx.service.d
+    state: directory
+    mode: "0755"
+    owner: root
+- name: Set limits for nginx systemd units
+  community.general.ini_file:
+    create: yes
+    path: /etc/systemd/system/nginx.service.d/override.conf
+    mode: "0644"
+    section: Service
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_items: "{{ nginx_limits | default({}) | dict2items }}"
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon-reload: yes
+- name: Generate nginx main config
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx
+    owner: root
+    group: root
+    mode: "0644"
+  notify: reload nginx
+- name: Delete default server config
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+- name: Create nginx default server
+  ansible.builtin.copy:
+    content: "{{ nginx_default_server }}"
+    dest: "/etc/nginx/conf.d/http-server-default.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  when: nginx_default_server_enable
+  notify: reload nginx
+- name: Create user-defined configuration files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/conf.d/{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: "{{ nginx_extra_conf | default([]) }}"
+  notify: reload nginx
+- name: Set basic auth up
+  community.general.htpasswd:
+    path: "/etc/nginx/{{ nginx_basic_auth.filename }}"
+    owner: root
+    group: nginx
+    mode: "0640"
+    name: "{{ item.key }}"
+    password: "{{ item.value }}"
+  with_items: "{{ nginx_basic_auth.users | default({}) | dict2items }}"
+  when: nginx_basic_auth is defined
+- name: Validate configuration  # noqa 301 305
+  ansible.builtin.shell:
+    cmd: nginx -qt

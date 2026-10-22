@@ -1,0 +1,64 @@
+---
+certbot_version: 4.2.0
+certbot_email: admin@localhost
+
+certbot_skip: no
+
+certbot_deploy_hooks:
+  - nginx_reload.sh
+
+certbot_pre_hooks:
+  - nginx_stop.sh
+
+certbot_post_hooks:
+  - nginx_start.sh
+
+# List of certs managed by AWS Route53
+#certbot_route53:
+  # Name of certificate - used in paths
+  #web:
+  #  renew: yes
+  #  pre_hook: somescript.sh
+  #  post_hook: anotherscript.sh
+  #  deploy_hook: otherscript.sh
+  #  domains:
+  #    - example.com
+
+#certbot_digitalocean:
+  # Name of certificate - used in paths
+  #web:
+  #  renew: yes
+  #  pre_hook: somescript.sh
+  #  post_hook: anotherscript.sh
+  #  deploy_hook: otherscript.sh
+  #  domains:
+  #    - example.com
+
+#certbot_cloudflare:
+  # Name of certificate - used in paths
+  #web:
+  #  renew: yes
+  #  pre_hook: somescript.sh
+  #  post_hook: anotherscript.sh
+  #  deploy_hook: otherscript.sh
+  #  domains:
+  #    - example.com
+
+#certbot_webroot:
+  #web:
+  #  renew: yes
+  #  pre_hook: somescript.sh
+  #  post_hook: anotherscript.sh
+  #  deploy_hook: otherscript.sh
+  #  dir: /var/www/example.com
+  #  domains:
+  #    - example.com
+
+# CloudFlare authorization
+#cloudflare_auth:
+#  dns_cloudflare_api_token: 0123456789abcdef0123456789abcdef01234567
+
+certbot_pip:
+  - "certbot == {{ certbot_version }}"
+  - "certbot-nginx == {{ certbot_version }}"
+  - "acme == {{ certbot_version }}"

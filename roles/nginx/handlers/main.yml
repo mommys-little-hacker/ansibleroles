@@ -1,0 +1,14 @@
+---
+- name: Reload systemd daemons
+  ansible.builtin.systemd:
+    daemon-reload: yes
+  listen: daemon-reload
+- name: Reload nginx
+  ansible.builtin.shell:
+    cmd: nginx -t && nginx -s reload
+  listen: reload nginx
+- name: Restart nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+  listen: restart nginx

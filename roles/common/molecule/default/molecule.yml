@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+    requirements-file: collections.yml
+driver:
+  name: lxd
+lint: >-
+  yamllint .
+  && ansible-lint
+platforms:
+  - name: instance
+    source:
+      type: image
+      mode: pull
+      server: https://images.linuxcontainers.org
+      protocol: simplestreams
+      alias: debian/11
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

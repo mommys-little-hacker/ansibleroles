@@ -1,0 +1,30 @@
+---
+- name: Install Certbot
+  import_tasks: install.yml
+- name: Render hooks
+  import_tasks: render_hooks.yml
+- name: Set up Certbot for webroot verification
+  include_tasks: webroot.yml
+  when:
+    - certbot_webroot is defined
+    - not certbot_skip
+- name: Set up Certbot using standalone verification method
+  include_tasks: standalone.yml
+  when:
+    - certbot_standalone is defined
+    - not certbot_skip
+- name: Set up Certbot for Route53
+  include_tasks: route53.yml
+  when:
+    - certbot_route53 is defined
+    - not certbot_skip
+- name: Set up Certbot for DigitalOcean
+  include_tasks: digitalocean.yml
+  when:
+    - certbot_digitalocean is defined
+    - not certbot_skip
+- name: Set up Certbot for CloudFlare
+  include_tasks: cloudflare.yml
+  when:
+    - certbot_cloudflare is defined
+    - not certbot_skip

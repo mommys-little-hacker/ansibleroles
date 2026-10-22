@@ -1,0 +1,21 @@
+---
+nginx_repo_enable: true
+
+nginx_packages:
+  - "nginx=1.28.*"
+
+nginx_packages_extra:
+  - "apache2-utils"
+  - "python3-passlib"
+
+nginx_limits:
+  LimitNOFILE: 65500
+
+nginx_install:
+  key: https://nginx.org/keys/nginx_signing.key
+  repo: >-
+    deb
+    [signed-by=/etc/apt/keyrings/nginx-archive-keyring.gpg]
+    http://nginx.org/packages/{{ ansible_facts.distribution | lower }}
+    {{ ansible_distribution_release }}
+    nginx

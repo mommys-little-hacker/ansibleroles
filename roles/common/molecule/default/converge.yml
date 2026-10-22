@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    users_create:
+      - name: test1
+        comment: test account
+        shell: /bin/bash
+        groups:
+          - sudo
+          - adm
+        root_sudo: yes
+        pubkeys:
+          - ssh-rsa qqqwwweeerrrtttyyy invalid
+      - name: test2
+        comment: test account
+        shell: /bin/bash
+        groups:
+          - sudo
+        root_sudo: yes
+        pubkeys:
+          - ssh-rsa qqqwwweeerrrtttyyy invalid
+    users_delete:
+      - name: test1
+        remove_files: no
+  tasks:
+    - name: edit hostname  # noqa 301 305
+      ansible.builtin.shell:
+        cmd: "hostnamectl set-hostname instance.local"
+    - name: "Include common"
+      ansible.builtin.include_role:
+        name: "common"

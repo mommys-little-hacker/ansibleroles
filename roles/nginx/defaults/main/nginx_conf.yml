@@ -1,0 +1,8 @@
+---
+nginx_default_server_enable: yes
+nginx_default_server: |
+  server {
+    listen 80 default;
+    return 404;
+    access_log /var/log/nginx/default.access.log combined;
+  }

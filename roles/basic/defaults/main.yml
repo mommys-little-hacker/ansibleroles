@@ -1,0 +1,18 @@
+---
+environment_name: local
+
+basic_git_ssh_enabled: false
+basic_git_ssh_src: "../assets/{{ environment_name }}/git/id_ecdsa"
+
+basic_packages:
+  - acl
+  - apt-transport-https
+  - aptitude
+  - cron
+  - dirmngr
+  - git
+  - parted
+  - python3-minimal
+  - python3-pip
+  - python3-setuptools
+  - unzip

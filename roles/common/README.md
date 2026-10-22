@@ -1,24 +1,6 @@
-# common
+# Ansible common role
 
-Базовая настройка сервера: установка базовых пакетов и часового пояса.
-Пример-образец для остальных ролей репозитория.
-
-## Переменные
-
-| Переменная | По умолчанию | Описание |
-|------------|--------------|----------|
-| `common_packages` | `[curl, wget, vim, htop]` | Список базовых пакетов |
-| `common_timezone` | `Etc/UTC` | Часовой пояс сервера |
-
-## Пример
-
-```yaml
----
-- name: Настройка сервера
-  hosts: all
-  become: true
-  roles:
-    - role: common
-      vars:
-        common_timezone: Europe/Moscow
-```
+Role with some common tasks:
+- Setting timezone
+- Installing packages
+- Creating users

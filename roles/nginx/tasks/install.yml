@@ -1,0 +1,31 @@
+---
+- name: Add nginx repo key
+  ansible.builtin.get_url:
+    url: "{{ nginx_install.key }}"
+    dest: /tmp/nginx-archive-keyring.gpg
+  when: nginx_repo_enable
+- name: Dearmor key
+  ansible.builtin.shell:
+    cmd: >-
+      gpg --dearmor
+      < /tmp/nginx-archive-keyring.gpg
+      > /etc/apt/keyrings/nginx-archive-keyring.gpg
+  when: nginx_repo_enable
+- name: Add nginx repo
+  ansible.builtin.apt_repository:
+    repo: "{{ nginx_install.repo }}"
+    state: present
+    filename: nginx
+  when: nginx_repo_enable
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ nginx_packages + nginx_packages_extra }}"
+- name: Hold nginx package to prevent updates
+  ansible.builtin.dpkg_selections:
+    name: "{{ item | split('=') | first }}"
+    selection: hold
+  with_items: "{{ nginx_packages }}"
+- name: Stop nginx if running
+  ansible.builtin.service:
+    name: nginx
+    state: stopped

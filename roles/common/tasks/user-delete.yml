@@ -1,0 +1,10 @@
+---
+- name: "Delete user account {{ item.name }}"
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    remove: "{{ item.remove_files }}"
+    state: absent
+- name: "Delete sudoers entry {{ item.name }}"
+  ansible.builtin.file:
+    path: "/etc/sudoers.d/{{ item.name }}"
+    state: absent

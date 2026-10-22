@@ -1,17 +1,15 @@
 ---
-# Метаданные роли common.
 galaxy_info:
-  author: qwertys.ru team
-  description: Базовая настройка сервера (пакеты, часовой пояс)
-  license: proprietary
-  min_ansible_version: "2.16"
+  role_name: common
+  author: Maxim Vasilev <admin@qwertys.ru>
+  description: This playbook installs some common stuff
+  min_ansible_version: "2.12"
+  license: EULA
   platforms:
     - name: Debian
       versions:
-        - bookworm
-    - name: Ubuntu
-      versions:
-        - jammy
-        - noble
-
-dependencies: []
+        - buster
+        - bullseye
+allow_duplicates: false
+dependencies:
+  - name: basic

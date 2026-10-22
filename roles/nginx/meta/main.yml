@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: nginx
+  author: Maxim Vasilev <admin@qwertys.ru>
+  description: This role installs nginx on debian/ubuntu box
+  min_ansible_version: "2.10"
+  license: EULA
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - bionic
+allow_duplicates: false
+dependencies:
+  - name: basic

@@ -1,0 +1,50 @@
+---
+- name: Install CloudFlare support for Certbot
+  ansible.builtin.pip:
+    name: "certbot-dns-cloudflare == {{ certbot_version }}"
+    virtualenv: /opt/certbot
+- name: Set up CloudFlare auth
+  community.general.ini_file:
+    path: "{{ ansible_env.HOME }}/.cloudflare"
+    create: yes
+    section: null
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    mode: "0700"
+  with_items: "{{ cloudflare_creds | dict2items }}"
+  no_log: yes
+  when: cloudflare_creds is defined
+- name: Get certs  # noqa 301 305
+  ansible.builtin.shell: >
+    . /opt/certbot/bin/activate
+    && certbot certonly
+    --agree-tos
+    --email {{ certbot_email }}
+    --dns-cloudflare
+    --dns-cloudflare-credentials "{{ ansible_env.HOME }}/.cloudflare"
+    --quiet
+    --cert-name {{ item.key }}
+    {% for domain in item.value.domains %}-d {{ domain }} -d www.{{ domain }} {%endfor%}
+  with_items: "{{ certbot_cloudflare | default({}) | dict2items }}"
+  retries: 3
+  delay: 1
+  register: certbot_cf_result
+  until: certbot_cf_result.rc == 0
+- name: Set up certificate renewal
+  ansible.builtin.cron:
+    name: "cert-renew {{ item.key }}"
+    job: >
+      . /opt/certbot/bin/activate
+      && certbot renew
+      --cert-name {{ item.key }}
+      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook }} {% endif %}
+      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif %}
+      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }} {% endif %}
+      -q
+    minute: "30"
+    hour: "2"
+    day: "*/14"
+    month: "*"
+    weekday: "*"
+  with_items: "{{ certbot_cloudflare | default({}) | dict2items }}"
+  when: item.renew | default(true)

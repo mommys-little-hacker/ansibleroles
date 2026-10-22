@@ -1,0 +1,40 @@
+---
+- name: Install some basic stuff
+  ansible.builtin.apt:
+    name: "{{ basic_packages }}"
+    update_cache: yes
+    cache_valid_time: 86400
+- name: Get package facts
+  ansible.builtin.package_facts:
+    manager: apt
+- name: Disable old Let's Encrypt CA
+  ansible.builtin.lineinfile:
+    path: /etc/ca-certificates.conf
+    regexp: '^mozilla/DST_Root_CA_X3\.crt$'
+    line: '!mozilla/DST_Root_CA_X3.crt'
+  register: certlist
+# Need to perform it instantly, not by handler, otherwise subsequent apt cache
+# updates my fail
+- name: Update CA certificates
+  ansible.builtin.shell:  # noqa command-instead-of-shell no-changed-when
+    cmd: update-ca-certificates
+  when: certlist.changed
+- name: Ensure git key
+  when: basic_git_ssh_enabled
+  tags:
+    - git
+  block:
+    - name: Create key folder
+      ansible.builtin.file:
+        path: /root/.ssh/git
+        state: directory
+        mode: "0700"
+        owner: root
+        group: root
+    - name: Add git key
+      ansible.builtin.copy:
+        src: "{{ basic_git_ssh_src }}"
+        dest: "/root/.ssh/git/id_ecdsa"
+        mode: "0700"
+        owner: root
+        group: root

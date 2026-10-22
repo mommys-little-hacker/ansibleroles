@@ -1,0 +1,5 @@
+---
+- name: Install DigitalOcean support for Certbot
+  ansible.builtin.pip:
+    name: "certbot-dns-digitalocean == {{ certbot_version }}"
+    virtualenv: /opt/certbot

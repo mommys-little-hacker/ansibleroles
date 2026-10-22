@@ -1,0 +1,33 @@
+---
+- name: Add Docker repo key
+  apt_key:
+    url: "{{ docker.repo_key }}"
+    state: present
+- name: Add Docker repo
+  apt_repository:
+    repo: "{{ docker.repo_line }}"
+    state: present
+    filename: docker
+- name: Install docker package
+  apt:
+    name:
+      - "{{ docker.package }}={{ docker.version }}"
+      - python3-docker
+    update_cache: no
+- name: Install docker python lib
+  apt:
+    name:
+      - python3-docker
+    update_cache: no
+  when: docker_pip.force == False
+- name: Install docker python lib
+  pip:
+    name:
+      - "{{ docker_pip.package }}=={{ docker_pip.version }}"
+    executable: /usr/bin/pip3
+    break_system_packages: yes
+    state: present
+  when: docker_pip.force
+- name: Re-gather network facts
+  setup:
+    gather_subset: network

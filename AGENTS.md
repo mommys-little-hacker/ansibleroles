@@ -19,7 +19,6 @@
 
 - `roles/<имя>/` — роли. Канонический скелет: `defaults/`, `tasks/`,
   `handlers/`, `files/`, `templates/`, `meta/`, `vars/`, опционально `molecule/`.
-- `playbooks/` — примеры плейбуков.
 - `requirements.yml` — внешние коллекции Galaxy.
 - `scripts/lint.sh` — локальный прогон линтеров (yamllint + ansible-lint);
   должен проходить без ошибок. CI, если настроен на git-платформе, — тоже.

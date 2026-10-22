@@ -1,0 +1,36 @@
+---
+- name: Ensure dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  with_items:
+    - /etc/letsencrypt/renewal-hooks/pre
+    - /etc/letsencrypt/renewal-hooks/post
+    - /etc/letsencrypt/renewal-hooks/deploy
+- name: Render deploy hooks
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/letsencrypt/renewal-hooks/deploy/{{ item }}"
+    owner: root
+    group: root
+    mode: "0700"
+  with_items: "{{ certbot_deploy_hooks }}"
+- name: Render pre hooks
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/letsencrypt/renewal-hooks/pre/{{ item }}"
+    owner: root
+    group: root
+    mode: "0700"
+  with_items: "{{ certbot_pre_hooks }}"
+- name: Render post hooks
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/letsencrypt/renewal-hooks/post/{{ item }}"
+    owner: root
+    group: root
+    mode: "0700"
+  with_items: "{{ certbot_post_hooks }}"

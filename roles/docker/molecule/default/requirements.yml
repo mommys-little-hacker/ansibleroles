@@ -1,0 +1,5 @@
+---
+- name: galaxy-basic
+  scm: git
+  src: git@gitlab.protek.ru:protek/zdravcity/devops/ansible/basic.git
+  version: master
