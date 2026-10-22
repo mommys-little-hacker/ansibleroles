@@ -8,7 +8,7 @@ docker:
     stable
   repo_key: "https://download.docker.com/linux/debian/gpg"
   package: docker-ce
-  version: "5:28.5.*"
+  version: "5:29.9.*"
 
 docker_pip:
   force: no
