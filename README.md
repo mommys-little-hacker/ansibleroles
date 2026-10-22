@@ -15,6 +15,7 @@
 ansibleroles/
 ├── README.md                 # Этот файл
 ├── AGENTS.md                 # Инструкции для ИИ-агентов
+├── galaxy.yml                # Метаданные Ansible-коллекции (qwertys.roles)
 ├── ansible.cfg               # Конфиг по умолчанию (roles_path и т.д.)
 ├── requirements.yml          # Внешние зависимости из Galaxy (community-коллекции)
 ├── .ansibleroles/            # Виртуальное окружение с Ansible (не в git)
@@ -69,8 +70,12 @@ pip install ansible ansible-lint yamllint
 
 ## Подключение ролей (для пользователей)
 
-> **Важно:** репозиторий закрытый. Любое подключение ролей требует доступа
-> к приватному репозиторию ansibleroles на git-сервере проекта:
+Репозиторий оформлен как **Ansible-коллекция** `qwertys.roles` и подключается
+к проектам через `ansible-galaxy collection install` прямо из приватного
+git-репозитория — без копирования файлов или git-submodule.
+
+> **Важно:** репозиторий закрытый. Установка требует доступа к приватному
+> репозиторию ansibleroles на git-сервере проекта:
 
 - для людей — SSH-ключ, добавленный в аккаунт на git-сервере, и права на чтение репозитория;
 - для CI/CD и серверов — **deploy key** (read-only SSH-ключ) или read-only токен доступа (названия и настройка зависят от вашей git-платформы).
@@ -79,70 +84,31 @@ pip install ansible ansible-lint yamllint
 используется плейсхолдер `git@<git-сервер>:<группа>/ansibleroles.git` —
 подставьте фактический SSH-URL (узнать: `git remote get-url origin`).
 
-`ansible-galaxy` не умеет устанавливать отдельную роль из подкаталога
-git-репозитория, поэтому роли подключаются **всего репозитория целиком** одним
-из способов ниже. Все варианты требуют настроенного SSH-доступа:
+### Установка коллекции
 
 ```bash
-ssh -T git@<git-сервер>   # успешная аутентификация подтверждается сообщением сервера
+ssh -T git@<git-сервер>   # проверка аутентификации
+
+# Установка последней версии из ветки main
+ansible-galaxy collection install git@<git-сервер>:<группа>/ansibleroles.git
+
+# Установка конкретной версии (тег) — рекомендуется для production
+ansible-galaxy collection install 'git+ssh://git@<git-сервер>/<группа>/ansibleroles.git,v1.0.0'
+
+# Обновление до новой версии
+ansible-galaxy collection install --upgrade git@<git-сервер>:<группа>/ansibleroles.git
 ```
 
-### Вариант 1 — git submodule (рекомендуется)
+По умолчанию коллекция ставится в `~/.ansible/collections/` (путь можно
+переопределить через `--collections-path` или `collections_path` в
+`ansible.cfg`). Все роли репозитория ставятся одной командой; роли
+`community.general` и `ansible.posix`, используемые ролями, ставятся
+автоматически (объявлены в `galaxy.yml`).
 
-Позволяет зафиксировать конкретную версию репозитория ролей и обновлять её
-осознанно.
+### Подключение к плейбукам
 
-```bash
-cd <ваш-репозиторий-с-плейбуками>
-
-# Подключить (по умолчанию — ветка main)
-git submodule add git@<git-сервер>:<группа>/ansibleroles.git vendor/ansibleroles
-
-# Зафиксировать конкретную версию (тег)
-cd vendor/ansibleroles
-git checkout v1.2.0
-cd -
-git add vendor/ansibleroles
-git commit -m "Add ansibleroles v1.2.0"
-```
-
-Обновление до новой версии:
-
-```bash
-git submodule update --remote vendor/ansibleroles
-cd vendor/ansibleroles && git checkout vX.Y.Z && cd -
-git add vendor/ansibleroles && git commit -m "Bump ansibleroles to vX.Y.Z"
-```
-
-Клонирование вашего репозитория вместе с ролями:
-
-```bash
-git clone --recurse-submodules git@<git-сервер>:<группа>/<репозиторий-плейбуков>.git
-# или, если уже склонировано:
-git submodule update --init --recursive
-```
-
-### Вариант 2 — обычный clone
-
-Подходит для быстрых экспериментов и рабочих станций, где не нужен
-контроль версий на стороне потребителя:
-
-```bash
-mkdir -p vendor
-git clone git@<git-сервер>:<группа>/ansibleroles.git vendor/ansibleroles
-```
-
-### Подключение ролей к плейбукам
-
-В `ansible.cfg` вашего репозитория добавьте каталог с ролями в `roles_path`
-(первым указывается локальный `roles/`, потом роли этого репозитория):
-
-```ini
-[defaults]
-roles_path = roles:vendor/ansibleroles/roles
-```
-
-После этого роли доступны в плейбуках просто по имени каталога:
+После установки роли доступны в плейбуках по полному имени
+`qwertys.roles.<роль>`:
 
 ```yaml
 ---
@@ -150,7 +116,9 @@ roles_path = roles:vendor/ansibleroles/roles
   hosts: all
   become: true
   roles:
-    - common            # роль из vendor/ansibleroles/roles/common
+    - qwertys.roles.basic      # выполняется первой, зависимости подтянутся сами
+    - qwertys.roles.common
+    - qwertys.roles.nginx
 ```
 
 Пример переопределения переменных роли:
@@ -161,17 +129,42 @@ roles_path = roles:vendor/ansibleroles/roles
   hosts: all
   become: true
   roles:
-    - role: common
+    - role: qwertys.roles.common
       vars:
-        common_packages:
+        extra_pkgs:
           - curl
           - vim
 ```
+
+Внутри коллекции роли уже объявляют зависимость от роли `basic` в
+`meta/main.yml`, поэтому отдельно перечислять её необязательно — она
+выполнится автоматически перед зависящей от неё ролью.
 
 Запуск:
 
 ```bash
 ansible-playbook -i inventory/production playbooks/site.yml
+```
+
+### Установка из requirements.yml
+
+Чтобы зафиксировать версии коллекций проекта в одном файле, добавьте
+коллекцию в `requirements.yml` вашего репозитория:
+
+```yaml
+---
+collections:
+  # Роли qwertys.ru (приватный git-репозиторий)
+  - name: git@<git-сервер>:<группа>/ansibleroles.git
+    type: git
+    version: v1.0.0
+  # Роль common использует эти коллекции (ставятся и из galaxy.yml автоматически)
+  - name: community.general
+  - name: ansible.posix
+```
+
+```bash
+ansible-galaxy collection install -r requirements.yml
 ```
 
 ### CI в вашем репозитории
@@ -182,10 +175,10 @@ ansible-playbook -i inventory/production playbooks/site.yml
 1. Создайте в репозитории ansibleroles deploy key (read-only) или заведите
    read-only токен — в зависимости от возможностей вашей git-платформы.
 2. Передайте ключ/токен в CI через его механизм секретов.
-3. Перед запуском плейбуков в пайплайне инициализируйте субмодули:
+3. Перед запуском плейбуков в пайплайне установите коллекцию:
 
 ```bash
-git submodule update --init --recursive
+ansible-galaxy collection install 'git+ssh://git@<git-сервер>/<группа>/ansibleroles.git,vX.Y.Z'
 ```
 
 Итого CI нужен только SSH-доступ с правом **чтения** к репозиторию
@@ -198,13 +191,21 @@ ansibleroles; права записи не требуются.
   - `X` — несовместимые изменения (переименование переменных, смена поведения по умолчанию);
   - `Y` — новая функциональность, обратно совместимая;
   - `Z` — исправления багов.
+- При выпуске тега синхронно поднимается `version` в `galaxy.yml`.
 - В production подключайте роли по тегам, а не по `main`.
 
 ### Список ролей
 
+Все роли ставятся в составе коллекции `qwertys.roles` и зависят от роли
+`basic` (базовые пакеты и настройки).
+
 | Роль | Назначение | Ключевые переменные |
 |------|------------|---------------------|
-| `common` | Базовая настройка серверов (пакеты, часовой пояс) | `common_packages`, `common_timezone` |
+| `basic` | Базовые пакеты и настройки, общие для всех остальных ролей | `basic_packages`, `basic_git_ssh_enabled`, `basic_git_ssh_src` |
+| `common` | Базовая настройка серверов (часовой пояс, пользователи, cron, sysctl) | `common_pkgs`, `extra_pkgs`, `timezone`, `users_create`, `users_delete`, `cron_env` |
+| `docker` | Установка и настройка Docker CE | `docker.repo_line`, `docker.repo_key`, `docker.package`, `docker.version`, `docker_pip` |
+| `nginx` | Установка nginx с репозитория nginx.org | `nginx_repo_enable`, `nginx_packages`, `nginx_packages_extra`, `nginx_install` |
+| `certbot` | Установка certbot и выпуск TLS-сертификатов Let's Encrypt | `certbot_version`, `certbot_email`, `certbot_webroot`, `certbot_route53`, `certbot_cloudflare` |
 
 *При добавлении роли обязательно дополните таблицу.*
 
@@ -229,9 +230,11 @@ source .ansibleroles/bin/activate
 
 5. Опционально добавьте Molecule-сценарий: `molecule init scenario` внутри роли.
 6. Откройте merge/pull request в `main`. Линтеры (`./scripts/lint.sh`) и CI, если настроен на git-платформе, должны пройти.
-7. После мержа при необходимости выпустите тег `vX.Y.Z`:
+7. После мержа при необходимости выпустите тег `vX.Y.Z`, синхронно подняв
+   `version` в корневом `galaxy.yml`:
 
 ```bash
+# version: 1.1.0 в galaxy.yml
 git tag -a v1.1.0 -m "New role: backup_client"
 git push origin v1.1.0
 ```

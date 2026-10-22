@@ -13,15 +13,20 @@
 ## 3. Код
 - [ ] Модули с FQCN (`ansible.builtin.*`, `community.*`)
 - [ ] Новые внешние коллекции добавлены в `requirements.yml`
+- [ ] В `meta/main.yml` объявлена зависимость от роли `basic`
+      (`dependencies: - name: basic`)
 - [ ] Идемпотентность: повторный запуск не меняет состояние;
       для `command`/`shell` заданы `changed_when`/`creates`
 - [ ] Нет секретов в открытом виде (только `ansible-vault`)
 - [ ] Уведомления (`notify`) ссылаться только на существующие handlers
+- [ ] `apt-get update` (`update_cache: true`) не вызывается без добавления
+      нового репозитория — кеш обновляет роль `basic` (см. AGENTS.md, п. 10)
 
 ## 4. Документация
 - [ ] README роли: назначение, таблица переменных, пример использования
 - [ ] Таблица ролей в корневом `README.md` дополнена
-- [ ] Часовой пояс/специфика ОС учтены в `meta/main.yml` (platforms)
+- [ ] Целевая платформа учтена: в первую очередь Debian 13 (trixie),
+      поддерживаемые версии указаны в `meta/main.yml` (`galaxy_info.platforms`)
 
 ## 5. Проверки и релиз
 - [ ] Окружение `.ansibleroles` создано и активировано (`source .ansibleroles/bin/activate`)
@@ -29,4 +34,5 @@
 - [ ] `ansible-lint` — без ошибок
 - [ ] (опционально) Molecule-сценарий в `roles/<имя>/molecule/`, `molecule test` зелёный
 - [ ] Merge/pull request в `main`; `scripts/lint.sh` и CI (если настроен на git-платформе) зелёные
-- [ ] При необходимости — тег `vX.Y.Z` после мержа
+- [ ] При теге `vX.Y.Z` — синхронно поднять `version` в корневом `galaxy.yml`
+      (версия коллекции = версия тега)

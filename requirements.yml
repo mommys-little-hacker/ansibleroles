@@ -1,8 +1,10 @@
+---
 # Внешние зависимости для ролей (коллекции Galaxy).
 # Установка: ansible-galaxy collection install -r requirements.yml
----
+# Эти же коллекции объявлены в galaxy.yml и ставятся автоматически при
+# установке коллекции qwertys.roles из этого репозитория.
 collections:
-  # - name: community.general
-  #   version: ">=8.0.0"
-  # - name: community.docker
-  #   version: ">=3.0.0"
+  - name: community.general
+    version: ">=8.0.0"
+  - name: ansible.posix
+    version: ">=1.0.0"

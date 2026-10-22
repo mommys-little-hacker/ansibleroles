@@ -1,23 +1,19 @@
 ---
 galaxy_info:
   role_name: docker
-  author: mxmvasilev0@gmail.com
+  author: Maxim Vasilev <admin@qwertys.ru>
   description: Sets docker up
   min_ansible_version: 2.8
   license: EULA
   platforms:
-    - name: Ubuntu
-      versions:
-        - bionic
-    - name: Ubuntu
-      versions:
-        - focal
-    - name: Ubuntu
-      versions:
-        - xenial
     - name: Debian
       versions:
-        - buster
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
 allow_duplicates: no
 dependencies:
   - name: basic

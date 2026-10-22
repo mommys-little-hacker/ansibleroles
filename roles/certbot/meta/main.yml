@@ -8,11 +8,12 @@ galaxy_info:
   platforms:
     - name: Debian
       versions:
-        - buster
-        - bullseye
+        - bookworm
+        - trixie
     - name: Ubuntu
       versions:
-        - bionic
+        - jammy
+        - noble
 allow_duplicates: no
 dependencies:
   - name: basic

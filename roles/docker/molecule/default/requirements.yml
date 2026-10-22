@@ -1,5 +1,6 @@
 ---
-- name: galaxy-basic
-  scm: git
-  src: git@gitlab.protek.ru:protek/zdravcity/devops/ansible/basic.git
-  version: master
+# Зависимости molecule-сценария раньше тянулись из отдельного gitlab-репозитория.
+# Теперь роль basic входит в коллекцию qwertys.roles из этого же репозитория
+# (см. meta/main.yml: dependencies). При переработке molecule-сценариев
+# зависимость ставится из этой коллекции.
+[]
