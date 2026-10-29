@@ -12,13 +12,13 @@
     path: /etc/ca-certificates.conf
     regexp: "^mozilla/DST_Root_CA_X3\\.crt$"
     line: "!mozilla/DST_Root_CA_X3.crt"
-  register: certlist
+  register: basic_certlist
 # Need to perform it instantly, not by handler, otherwise subsequent apt cache
 # updates my fail
 - name: Update CA certificates
-  ansible.builtin.shell: # noqa command-instead-of-shell no-changed-when
+  ansible.builtin.shell: # noqa command-instead-of-shell no-changed-when no-handler
     cmd: update-ca-certificates
-  when: certlist.changed
+  when: basic_certlist.changed
 - name: Ensure git key
   when: basic_git_ssh_enabled
   tags:

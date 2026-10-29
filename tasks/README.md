@@ -4,11 +4,11 @@
 
 | ID | Название | Статус |
 |----|----------|--------|
-| TASK-000 | [Исправить ошибки ansible-lint в роли basic](TASK-000.md) | Новая |
-| TASK-001 | [Исправить ошибки ansible-lint в роли common](TASK-001.md) | Новая |
+| TASK-000 | [Исправить ошибки ansible-lint в роли basic](TASK-000.md) | Тестирование |
+| TASK-001 | [Исправить ошибки ansible-lint в роли common](TASK-001.md) | Тестирование |
 | TASK-002 | [Исправить ошибки ansible-lint в роли nginx и мета коллекции](TASK-002.md) | Новая |
+| TASK-003 | [Исправить ошибки ansible-lint в роли certbot](TASK-003.md) | Новая |
 | TASK-004 | [Исправить ошибки ansible-lint в роли docker](TASK-004.md) | Новая |
-| TASK-006 | [Исправить ошибки ansible-lint в роли certbot](TASK-006.md) | Новая |
 
 [Пример формата задачи](EXAMPLE.md)
 

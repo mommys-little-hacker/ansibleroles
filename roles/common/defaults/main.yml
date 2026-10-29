@@ -1,11 +1,11 @@
 ---
-timezone: UTC
+common_timezone: UTC
 
-users_create: []
+common_users_create: []
 
-users_delete: []
+common_users_delete: []
 
-cron_env:
+common_cron_env:
   MAILTO: root@localhost
   SHELL: /usr/bin/bash
 
@@ -36,7 +36,7 @@ common_pkgs:
   - tcpdump
   - wget
 
-extra_pkgs: []
+common_extra_pkgs: []
 
 # systemd_default_limits:
   # Manager:

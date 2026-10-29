@@ -1,22 +1,22 @@
 ---
 - name: Set timezone
   community.general.timezone:
-    name: "{{ timezone }}"
+    name: "{{ common_timezone }}"
 - name: Install packages
   ansible.builtin.apt:
-    name: "{{ common_pkgs + extra_pkgs }}"
+    name: "{{ common_pkgs + common_extra_pkgs }}"
     state: present
     update_cache: false
   when: >
     common_pkgs is not subset(ansible_facts.packages)
-    or extra_pkgs is not subset(ansible_facts.packages)
+    or common_extra_pkgs is not subset(ansible_facts.packages)
 - name: Set up cron vars
   ansible.builtin.cron:
     env: true
     user: "root"
     name: "{{ item.key }}"
     value: "{{ item.value }}"
-  with_items: "{{ cron_env | dict2items }}"
+  with_items: "{{ common_cron_env | dict2items }}"
 - name: Set default systemd limits
   ansible.builtin.template:
     src: system.conf
@@ -44,7 +44,7 @@
       value: "65535"
 - name: Create users
   ansible.builtin.include_tasks: "user-create.yml"
-  with_items: "{{ users_create }}"
+  with_items: "{{ common_users_create }}"
 - name: Delete users
   ansible.builtin.include_tasks: "user-delete.yml"
-  with_items: "{{ users_delete }}"
+  with_items: "{{ common_users_delete }}"

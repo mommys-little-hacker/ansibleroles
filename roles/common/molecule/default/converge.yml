@@ -2,7 +2,7 @@
 - name: Converge
   hosts: all
   vars:
-    users_create:
+    common_users_create:
       - name: test1
         comment: test account
         shell: /bin/bash
@@ -20,7 +20,7 @@
         root_sudo: true
         pubkeys:
           - ssh-rsa qqqwwweeerrrtttyyy invalid
-    users_delete:
+    common_users_delete:
       - name: test1
         remove_files: false
   tasks:

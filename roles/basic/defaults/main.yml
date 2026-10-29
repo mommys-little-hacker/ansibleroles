@@ -1,8 +1,8 @@
 ---
-environment_name: local
+basic_environment_name: local
 
 basic_git_ssh_enabled: false
-basic_git_ssh_src: "../assets/{{ environment_name }}/git/id_ecdsa"
+basic_git_ssh_src: "../assets/{{ basic_environment_name }}/git/id_ecdsa"
 
 basic_packages:
   - acl

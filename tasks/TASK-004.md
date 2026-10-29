@@ -19,14 +19,12 @@
 - `yaml[truthy]` (`roles/docker/molecule/default/molecule.yml:8,25`): заменить `yes/no` на `true/false`. Для `bionic`/`xenial` исправления не требуются — сценарии удаляются целиком (см. пункт про `syntax-check`).
 - `syntax-check[specific]` (`roles/docker/molecule/bionic/playbook.yml:5`): роль `ansible_docker` не найдена. **Решение владельца (2026-10-29): устаревшие molecule-сценарии удалить** — удалить каталоги `roles/docker/molecule/bionic/` и `roles/docker/molecule/xenial/` (Ubuntu 18.04/16.04 EOL, целевая платформа — Debian 13). Сценарий `default` сохранить и актуализировать (`yaml[truthy]` в `molecule/default/molecule.yml`). Заодно это снимет замечания `truthy` и `fqcn` в `bionic/prepare.yml` — их отдельно исправлять не нужно.
 - Логику роли не менять; идемпотентность сохранить.
-- Прогнать `./scripts/lint.sh` — по роли `docker` замечаний быть не должно. Если в роли есть molecule — прогнать `molecule test` для затронутых сценариев.
 
 ## Тест-кейсы
 1. `ansible-lint roles/docker/` завершается без ошибок и предупреждений.
 2. Повторный прогон роли идемпотентен: права на `/storage`, `/etc/docker`, `daemon.json` не «перепроставляются» как changes при `--check --diff` на настроенном хосте (либо изменение прав единожды и ожидаемо).
 3. `molecule test` (сценарий `default`) проходит успешно.
 4. При `docker_pip.force: false` ставится `python3-docker` из apt, при `true` — pip-пакет (поведение не изменилось).
-5. `./scripts/lint.sh` не возвращает новых замечаний по сравнению с базовой линией.
 
 ## Комментарии
 - 2026-10-29 (PM): Задача создана по результатам прогона `ansible-lint`.

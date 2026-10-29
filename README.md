@@ -22,8 +22,6 @@ ansibleroles/
 ├── .yamllint                 # Правила yamllint
 ├── .config/
 │   └── ansible-lint.yml      # Правила ansible-lint
-├── scripts/
-│   └── lint.sh               # Локальный прогон линтеров (yamllint + ansible-lint)
 ├── roles/                    # Роли проекта (имя каталога = имя роли)
 │   ├── README.md
 │   └── common/               # Пример роли
@@ -131,7 +129,7 @@ ansible-galaxy collection install --upgrade git@<git-сервер>:<группа
   roles:
     - role: qwertys.roles.common
       vars:
-        extra_pkgs:
+        common_extra_pkgs:
           - curl
           - vim
 ```
@@ -202,7 +200,7 @@ ansibleroles; права записи не требуются.
 | Роль | Назначение | Ключевые переменные |
 |------|------------|---------------------|
 | `basic` | Базовые пакеты и настройки, общие для всех остальных ролей | `basic_packages`, `basic_git_ssh_enabled`, `basic_git_ssh_src` |
-| `common` | Базовая настройка серверов (часовой пояс, пользователи, cron, sysctl) | `common_pkgs`, `extra_pkgs`, `timezone`, `users_create`, `users_delete`, `cron_env` |
+| `common` | Базовая настройка серверов (часовой пояс, пользователи, cron, sysctl) | `common_pkgs`, `common_extra_pkgs`, `common_timezone`, `common_users_create`, `common_users_delete`, `common_cron_env` |
 | `docker` | Установка и настройка Docker CE | `docker.repo_line`, `docker.repo_key`, `docker.package`, `docker.version`, `docker_pip` |
 | `nginx` | Установка nginx с репозитория nginx.org | `nginx_repo_enable`, `nginx_packages`, `nginx_packages_extra`, `nginx_install` |
 | `certbot` | Установка certbot и выпуск TLS-сертификатов Let's Encrypt | `certbot_version`, `certbot_email`, `certbot_webroot`, `certbot_route53`, `certbot_cloudflare` |
