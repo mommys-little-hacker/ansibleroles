@@ -16,10 +16,10 @@
 
 ## Тест-кейсы
 1. `ansible-lint roles/basic/` завершается без ошибок и предупреждений по правилам `var-naming[no-role-prefix]` и `no-handler`.
-2. Повторный запуск плейбука с ролью `basic` идемпотентен: при `--check --diff` на уже настроенном хосте нет неожиданных изменений.
-3. При изменении `/etc/ca-certificates.conf` задача «Update CA certificates» выполняется (проверить по `basic_certlist.changed`).
-4. При `basic_git_ssh_enabled: true` ключ копируется в `/root/.ssh/git/id_ecdsa`, путь строится от `basic_environment_name`.
+2. Логика роли не изменена (сверка диффа): переименованы только переменная/регистр, задача «Update CA certificates» по-прежнему выполняется сразу при изменении `/etc/ca-certificates.conf` (по коду: `register` + условие на `basic_certlist.changed`).
+3. При `basic_git_ssh_enabled: true` путь ключа строится от `basic_environment_name` (проверка по коду задачи копирования).
 
 ## Комментарии
 - 2026-10-29 (PM): Задача создана по результатам прогона `ansible-lint` (57 ошибок по проекту). Задача scope'ится только на роль `basic`. Связанные задачи: TASK-002 (common), TASK-004 (docker), TASK-006 (certbot), TASK-008 (nginx + мета коллекции).
+- 2026-10-29 (PM): Тест-кейсы 2–4 переписаны: репозиторий — чистая коллекция ролей без плейбуков, запускать плейбуки/роли (включая `--check --diff`) запрещено (см. `AGENT_CONTEXT.md`). Проверка — статический анализ кода и `ansible-lint`/`yamllint`.
 - 2026-10-29 (developer): Реализовано. `environment_name` → `basic_environment_name` (defaults + использование в `basic_git_ssh_src`), `certlist` → `basic_certlist` (register + `when`), к задаче «Update CA certificates» добавлен `no-handler` в строку `# noqa`. Логика роли не менялась. Проверки: `ansible-lint roles/basic/` — Passed (0 failures, 0 warnings, профиль `production`); `yamllint roles/basic/` — чисто; `ansible-lint` по всему проекту — 49 failures, все по другим ролям (docker, nginx, certbot), по `basic` замечаний нет.

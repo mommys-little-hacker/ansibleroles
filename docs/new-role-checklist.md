@@ -32,7 +32,9 @@
 - [ ] Окружение `.ansibleroles` создано и активировано (`source .ansibleroles/bin/activate`)
 - [ ] `yamllint .` — без ошибок
 - [ ] `ansible-lint` — без ошибок
-- [ ] (опционально) Molecule-сценарий в `roles/<имя>/molecule/`, `molecule test` зелёный
+- [ ] (опционально) Molecule-сценарий в `roles/<имя>/molecule/`
+      (сам `molecule test` не запускать — сценарии пока не готовы,
+      см. `AGENT_CONTEXT.md`)
 - [ ] Merge/pull request в `main`; `scripts/lint.sh` и CI (если настроен на git-платформе) зелёные
 - [ ] При теге `vX.Y.Z` — синхронно поднять `version` в корневом `galaxy.yml`
       (версия коллекции = версия тега)
