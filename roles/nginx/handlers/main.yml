@@ -1,7 +1,7 @@
 ---
 - name: Reload systemd daemons
   ansible.builtin.systemd:
-    daemon-reload: yes
+    daemon-reload: true
   listen: daemon-reload
 - name: Reload nginx
   ansible.builtin.shell:

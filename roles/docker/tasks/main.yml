@@ -1,11 +1,11 @@
 ---
 - name: Install Docker
-  import_tasks: install.yml
+  ansible.builtin.import_tasks: install.yml
   when: "'docker-ce' not in ansible_facts.packages"
 - name: Configure Docker
-  import_tasks: configure.yml
+  ansible.builtin.import_tasks: configure.yml
 - name: Ensure docker is enabled and running
-  service:
+  ansible.builtin.service:
     name: docker
-    enabled: yes
+    enabled: true
     state: started

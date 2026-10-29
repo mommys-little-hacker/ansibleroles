@@ -1,33 +1,33 @@
 ---
 - name: Add Docker repo key
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ docker.repo_key }}"
     state: present
 - name: Add Docker repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "{{ docker.repo_line }}"
     state: present
     filename: docker
 - name: Install docker package
-  apt:
+  ansible.builtin.apt:
     name:
       - "{{ docker.package }}={{ docker.version }}"
       - python3-docker
-    update_cache: no
+    update_cache: false
 - name: Install docker python lib
-  apt:
+  ansible.builtin.apt:
     name:
       - python3-docker
-    update_cache: no
+    update_cache: false
   when: docker_pip.force == False
 - name: Install docker python lib
-  pip:
+  ansible.builtin.pip:
     name:
       - "{{ docker_pip.package }}=={{ docker_pip.version }}"
     executable: /usr/bin/pip3
-    break_system_packages: yes
+    break_system_packages: true
     state: present
   when: docker_pip.force
 - name: Re-gather network facts
-  setup:
+  ansible.builtin.setup:
     gather_subset: network

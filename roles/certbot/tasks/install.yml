@@ -4,7 +4,7 @@
     name:
       - virtualenv
       - cron
-    update_cache: no
+    update_cache: false
 - name: Create virtualenv and install certbot
   ansible.builtin.pip:
     name: "{{ certbot_pip }}"

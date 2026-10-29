@@ -6,15 +6,15 @@
 - name: Set up CloudFlare auth
   community.general.ini_file:
     path: "{{ ansible_env.HOME }}/.cloudflare"
-    create: yes
-    section: null
+    create: true
+    section:
     option: "{{ item.key }}"
     value: "{{ item.value }}"
     mode: "0700"
   with_items: "{{ cloudflare_creds | dict2items }}"
-  no_log: yes
+  no_log: true
   when: cloudflare_creds is defined
-- name: Get certs  # noqa 301 305
+- name: Get certs # noqa 301 305
   ansible.builtin.shell: >
     . /opt/certbot/bin/activate
     && certbot certonly
@@ -37,9 +37,12 @@
       . /opt/certbot/bin/activate
       && certbot renew
       --cert-name {{ item.key }}
-      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook }} {% endif %}
-      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif %}
-      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }} {% endif %}
+      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook
+      }} {% endif %}
+      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif
+      %}
+      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }}
+      {% endif %}
       -q
     minute: "30"
     hour: "2"

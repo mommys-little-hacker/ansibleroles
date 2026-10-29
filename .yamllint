@@ -10,8 +10,16 @@ rules:
     check-keys: false
   indentation:
     indent-sequences: consistent
+  comments-indentation: false
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
 
 ignore: |
   .cache/
   .git/
   .molecule/
+  .ansible/
+  .ansibleroles/

@@ -2,7 +2,7 @@
 certbot_version: 4.2.0
 certbot_email: admin@localhost
 
-certbot_skip: no
+certbot_skip: false
 
 certbot_deploy_hooks:
   - nginx_reload.sh
@@ -15,44 +15,44 @@ certbot_post_hooks:
 
 # List of certs managed by AWS Route53
 #certbot_route53:
-  # Name of certificate - used in paths
-  #web:
-  #  renew: yes
-  #  pre_hook: somescript.sh
-  #  post_hook: anotherscript.sh
-  #  deploy_hook: otherscript.sh
-  #  domains:
-  #    - example.com
+# Name of certificate - used in paths
+#web:
+#  renew: yes
+#  pre_hook: somescript.sh
+#  post_hook: anotherscript.sh
+#  deploy_hook: otherscript.sh
+#  domains:
+#    - example.com
 
 #certbot_digitalocean:
-  # Name of certificate - used in paths
-  #web:
-  #  renew: yes
-  #  pre_hook: somescript.sh
-  #  post_hook: anotherscript.sh
-  #  deploy_hook: otherscript.sh
-  #  domains:
-  #    - example.com
+# Name of certificate - used in paths
+#web:
+#  renew: yes
+#  pre_hook: somescript.sh
+#  post_hook: anotherscript.sh
+#  deploy_hook: otherscript.sh
+#  domains:
+#    - example.com
 
 #certbot_cloudflare:
-  # Name of certificate - used in paths
-  #web:
-  #  renew: yes
-  #  pre_hook: somescript.sh
-  #  post_hook: anotherscript.sh
-  #  deploy_hook: otherscript.sh
-  #  domains:
-  #    - example.com
+# Name of certificate - used in paths
+#web:
+#  renew: yes
+#  pre_hook: somescript.sh
+#  post_hook: anotherscript.sh
+#  deploy_hook: otherscript.sh
+#  domains:
+#    - example.com
 
 #certbot_webroot:
-  #web:
-  #  renew: yes
-  #  pre_hook: somescript.sh
-  #  post_hook: anotherscript.sh
-  #  deploy_hook: otherscript.sh
-  #  dir: /var/www/example.com
-  #  domains:
-  #    - example.com
+#web:
+#  renew: yes
+#  pre_hook: somescript.sh
+#  post_hook: anotherscript.sh
+#  deploy_hook: otherscript.sh
+#  dir: /var/www/example.com
+#  domains:
+#    - example.com
 
 # CloudFlare authorization
 #cloudflare_auth:

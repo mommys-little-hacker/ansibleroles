@@ -14,6 +14,6 @@ galaxy_info:
       versions:
         - jammy
         - noble
-allow_duplicates: no
+allow_duplicates: false
 dependencies:
   - name: basic

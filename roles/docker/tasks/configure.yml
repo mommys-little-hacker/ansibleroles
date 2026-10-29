@@ -1,14 +1,14 @@
 ---
 - name: Create docker storage directory
-  file:
+  ansible.builtin.file:
     name: /storage
     state: directory
 - name: Create docker configuration directory
-  file:
+  ansible.builtin.file:
     name: /etc/docker
     state: directory
 - name: Copy Docker daemon config
-  copy:
+  ansible.builtin.copy:
     content: "{{ docker_conf | to_nice_json }}"
     dest: /etc/docker/daemon.json
   notify: restart docker

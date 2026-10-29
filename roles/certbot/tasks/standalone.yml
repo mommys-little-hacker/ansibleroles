@@ -1,11 +1,11 @@
 ---
 - name: Run pre hook
-  ansible.builtin.shell: "{{ certbot_standalone_cmd_pre }}"
+  ansible.builtin.command: "{{ certbot_standalone_cmd_pre }}"
   when:
     - certbot_standalone_cmd_pre is defined
     - certbot_standalone_cmd_pre
   ignore_errors: true
-- name: Get certs  # noqa 301 305
+- name: Get certs # noqa 301 305
   ansible.builtin.shell: >
     . /opt/certbot/bin/activate
     && certbot certonly
@@ -21,7 +21,7 @@
   register: certbot_standalone_result
   until: certbot_standalone_result.rc == 0
 - name: Run post hook
-  ansible.builtin.shell: "{{ certbot_standalone_cmd_post }}"
+  ansible.builtin.command: "{{ certbot_standalone_cmd_post }}"
   when:
     - certbot_standalone_cmd_post is defined
     - certbot_standalone_cmd_post
@@ -33,9 +33,12 @@
       . /opt/certbot/bin/activate
       && certbot renew
       --cert-name {{ item.key }}
-      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook }} {% endif %}
-      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif %}
-      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }} {% endif %}
+      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook
+      }} {% endif %}
+      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif
+      %}
+      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }}
+      {% endif %}
       -q
     minute: "30"
     hour: "2"

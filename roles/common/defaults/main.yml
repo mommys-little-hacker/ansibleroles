@@ -38,6 +38,6 @@ common_pkgs:
 
 extra_pkgs: []
 
-#systemd_default_limits:
-  #Manager:
-    #DefaultLimitNOFILE: infinity
+# systemd_default_limits:
+  # Manager:
+    # DefaultLimitNOFILE: infinity

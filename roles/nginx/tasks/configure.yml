@@ -7,7 +7,7 @@
     owner: root
 - name: Set limits for nginx systemd units
   community.general.ini_file:
-    create: yes
+    create: true
     path: /etc/systemd/system/nginx.service.d/override.conf
     mode: "0644"
     section: Service
@@ -16,7 +16,7 @@
   with_items: "{{ nginx_limits | default({}) | dict2items }}"
 - name: Reload systemd
   ansible.builtin.systemd:
-    daemon-reload: yes
+    daemon-reload: true
 - name: Generate nginx main config
   ansible.builtin.template:
     src: nginx.conf
@@ -56,8 +56,8 @@
     name: "{{ item.key }}"
     password: "{{ item.value }}"
   with_items: "{{ nginx_basic_auth.users | default({}) | dict2items }}"
-  no_log: yes
+  no_log: true
   when: nginx_basic_auth is defined
-- name: Validate configuration  # noqa 301 305
+- name: Validate configuration # noqa 301 305
   ansible.builtin.shell:
     cmd: nginx -qt

@@ -11,7 +11,7 @@ docker:
   version: "5:29.9.*"
 
 docker_pip:
-  force: no
+  force: false
   package: docker
   version: 7.1.0
 

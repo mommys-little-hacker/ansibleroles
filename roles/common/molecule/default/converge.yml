@@ -9,7 +9,7 @@
         groups:
           - sudo
           - adm
-        root_sudo: yes
+        root_sudo: true
         pubkeys:
           - ssh-rsa qqqwwweeerrrtttyyy invalid
       - name: test2
@@ -17,14 +17,14 @@
         shell: /bin/bash
         groups:
           - sudo
-        root_sudo: yes
+        root_sudo: true
         pubkeys:
           - ssh-rsa qqqwwweeerrrtttyyy invalid
     users_delete:
       - name: test1
-        remove_files: no
+        remove_files: false
   tasks:
-    - name: edit hostname  # noqa 301 305
+    - name: Edit hostname # noqa 301 305
       ansible.builtin.shell:
         cmd: "hostnamectl set-hostname instance.local"
     - name: "Include common"

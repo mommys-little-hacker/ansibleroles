@@ -6,6 +6,7 @@ ansible-lint-results.json
 
 # Галакси-кэш и артефакты
 collections/
+.ansible/
 *.tar.gz
 
 # Python / venv

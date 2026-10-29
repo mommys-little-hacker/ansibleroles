@@ -1,5 +1,5 @@
 ---
-nginx_default_server_enable: yes
+nginx_default_server_enable: true
 nginx_default_server: |
   server {
     listen 80 default;
