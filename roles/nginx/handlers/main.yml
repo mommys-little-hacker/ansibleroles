@@ -7,6 +7,7 @@
   ansible.builtin.shell:
     cmd: nginx -t && nginx -s reload
   listen: reload nginx
+  changed_when: true
 - name: Restart nginx
   ansible.builtin.service:
     name: nginx

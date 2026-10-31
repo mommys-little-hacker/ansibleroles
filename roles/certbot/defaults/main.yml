@@ -14,9 +14,9 @@ certbot_post_hooks:
   - nginx_start.sh
 
 # List of certs managed by AWS Route53
-#certbot_route53:
+# certbot_route53:
 # Name of certificate - used in paths
-#web:
+# web:
 #  renew: yes
 #  pre_hook: somescript.sh
 #  post_hook: anotherscript.sh
@@ -24,9 +24,9 @@ certbot_post_hooks:
 #  domains:
 #    - example.com
 
-#certbot_digitalocean:
+# certbot_digitalocean:
 # Name of certificate - used in paths
-#web:
+# web:
 #  renew: yes
 #  pre_hook: somescript.sh
 #  post_hook: anotherscript.sh
@@ -34,9 +34,9 @@ certbot_post_hooks:
 #  domains:
 #    - example.com
 
-#certbot_cloudflare:
+# certbot_cloudflare:
 # Name of certificate - used in paths
-#web:
+# web:
 #  renew: yes
 #  pre_hook: somescript.sh
 #  post_hook: anotherscript.sh
@@ -44,8 +44,8 @@ certbot_post_hooks:
 #  domains:
 #    - example.com
 
-#certbot_webroot:
-#web:
+# certbot_webroot:
+# web:
 #  renew: yes
 #  pre_hook: somescript.sh
 #  post_hook: anotherscript.sh
@@ -55,7 +55,7 @@ certbot_post_hooks:
 #    - example.com
 
 # CloudFlare authorization
-#cloudflare_auth:
+# cloudflare_auth:
 #  dns_cloudflare_api_token: 0123456789abcdef0123456789abcdef01234567
 
 certbot_pip:

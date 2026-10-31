@@ -1,17 +1,17 @@
 ---
 - name: Add Docker repo key
   ansible.builtin.apt_key:
-    url: "{{ docker.repo_key }}"
+    url: "{{ docker_apt.repo_key }}"
     state: present
 - name: Add Docker repo
   ansible.builtin.apt_repository:
-    repo: "{{ docker.repo_line }}"
+    repo: "{{ docker_apt.repo_line }}"
     state: present
     filename: docker
 - name: Install docker package
   ansible.builtin.apt:
     name:
-      - "{{ docker.package }}={{ docker.version }}"
+      - "{{ docker_apt.package }}={{ docker_apt.version }}"
       - python3-docker
     update_cache: false
 - name: Install docker python lib
@@ -19,7 +19,7 @@
     name:
       - python3-docker
     update_cache: false
-  when: docker_pip.force == False
+  when: not docker_pip.force
 - name: Install docker python lib
   ansible.builtin.pip:
     name:

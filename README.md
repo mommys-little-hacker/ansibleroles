@@ -201,7 +201,7 @@ ansibleroles; права записи не требуются.
 |------|------------|---------------------|
 | `basic` | Базовые пакеты и настройки, общие для всех остальных ролей | `basic_packages`, `basic_git_ssh_enabled`, `basic_git_ssh_src` |
 | `common` | Базовая настройка серверов (часовой пояс, пользователи, cron, sysctl) | `common_pkgs`, `common_extra_pkgs`, `common_timezone`, `common_users_create`, `common_users_delete`, `common_cron_env` |
-| `docker` | Установка и настройка Docker CE | `docker.repo_line`, `docker.repo_key`, `docker.package`, `docker.version`, `docker_pip` |
+| `docker` | Установка и настройка Docker CE | `docker_apt.repo_line`, `docker_apt.repo_key`, `docker_apt.package`, `docker_apt.version`, `docker_pip` |
 | `nginx` | Установка nginx с репозитория nginx.org | `nginx_repo_enable`, `nginx_packages`, `nginx_packages_extra`, `nginx_install` |
 | `certbot` | Установка certbot и выпуск TLS-сертификатов Let's Encrypt | `certbot_version`, `certbot_email`, `certbot_webroot`, `certbot_route53`, `certbot_cloudflare` |
 

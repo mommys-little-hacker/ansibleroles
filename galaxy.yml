@@ -8,8 +8,6 @@ version: 1.0.0
 readme: README.md
 authors:
   - Maxim Vasilev <admin@qwertys.ru>
-license:
-  - EULA
 description: Ansible roles for qwertys.ru infrastructure (targeted at Debian 13)
 repository: git@github.com:mommys-little-hacker/ansibleroles.git
 # Коллекции, используемые ролями (common: community.general.timezone,

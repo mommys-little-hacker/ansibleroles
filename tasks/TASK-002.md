@@ -1,8 +1,8 @@
 # TASK-002: Исправить ошибки ansible-lint в роли nginx и мета-данных коллекции
 
-**Статус:** Новая
+**Статус:** Тестирование
 **Создана:** 2026-10-29 (PM: opencode)
-**Взята в работу:** -
+**Взята в работу:** 2026-10-29 (developer)
 **Завершена:** -
 
 ## Описание
@@ -33,3 +33,11 @@
 - 2026-10-29 (PM): Задача создана по результатам прогона `ansible-lint`.
 - 2026-10-29 (PM): Решения владельца: (1) поле `license` в galaxy.yml — удалить (коллекция закрытая, лицензия не имеет смысла); (2) минимальную версию Ansible для `meta/runtime.yml` взять из фактически поддерживаемых ролей (`min_ansible_version` в `roles/*/meta/main.yml`), согласовать с владельцем, если значения расходятся; (3) формат changelog — простой markdown-файл CHANGELOG.md на усмотрение исполнителя.
 - 2026-10-29 (PM): Тест-кейсы 2–3 переписаны на статические проверки: репозиторий — чистая коллекция ролей без плейбуков, запускать плейбуки/роли (включая `--check --diff`) запрещено (см. `AGENT_CONTEXT.md`). Поведение handler'а и идемпотентность проверяются анализом кода, а не прогоном.
+- 2026-10-29 (developer): Задача взята в работу, изменения внесены:
+  - nginx: handler «Reload nginx» — `changed_when: true`; «Dearmor key» переведена на идемпотентную схему (дермарморинг во временный файл с `changed_when: false` + гарантия каталога `/etc/apt/keyrings` + `ansible.builtin.copy` 0644 без notify — по решению владельца, apt читает keyring с диска при каждой операции); `get_url` получил `mode: "0644"`; `enabled: yes` → `enabled: true`.
+  - galaxy.yml: поле `license` удалено (решение владельца).
+  - Создан `meta/runtime.yml` с `requires_ansible: ">=2.15.0"`.
+  - Создан `CHANGELOG.md` (простой markdown, секции по тегам 0.1.0–0.1.2).
+  - `.config/ansible-lint.yml`: в `skip_list` добавлен `galaxy[no-license]` (с явного согласия владельца — после удаления license ansible-lint требует лицензию, для закрытой коллекции она подавлена).
+- 2026-10-29 (developer): Решения владельца в ходе работы: (1) `requires_ansible` поднят до `>=2.15.0` вместо изначальной идеи `>=2.12.0` — ansible-lint (meta-runtime[unsupported-version]) принимает только >=2.15.0…>=2.19.0; (2) подавление `galaxy[no-license]` вместо указания SPDX-лицензии.
+- 2026-10-29 (developer): Проверки: `ansible-lint` по `roles/nginx` + `galaxy.yml` + `meta` — 0 провалов (профиль production, 5/5); `ansible-galaxy collection build`/`install` — без ошибок схемы и предупреждений о changelog/runtime; `yamllint` по изменённым файлам — чисто. Прогон по всему проекту оставшиеся нарушения не даёт по рамкам задачи: они в `certbot` (TASK-003), `docker` (TASK-004, включая molecule-сценарии) и molecule (устаревшие noqa-теги, `roles/nginx/tasks/configure.yml:61` — вне рамок TASK-002, вынесено на усмотрение PM).

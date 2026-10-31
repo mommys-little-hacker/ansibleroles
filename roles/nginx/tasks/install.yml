@@ -3,13 +3,31 @@
   ansible.builtin.get_url:
     url: "{{ nginx_install.key }}"
     dest: /tmp/nginx-archive-keyring.gpg
+    mode: "0644"
   when: nginx_repo_enable
-- name: Dearmor key
+- name: Dearmor key to temporary file
   ansible.builtin.shell:
     cmd: >-
       gpg --dearmor
       < /tmp/nginx-archive-keyring.gpg
-      > /etc/apt/keyrings/nginx-archive-keyring.gpg
+      > /tmp/nginx-archive-keyring.dearmored.gpg
+  when: nginx_repo_enable
+  changed_when: false
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: nginx_repo_enable
+- name: Install nginx repo key
+  ansible.builtin.copy:
+    src: /tmp/nginx-archive-keyring.dearmored.gpg
+    dest: /etc/apt/keyrings/nginx-archive-keyring.gpg
+    owner: root
+    group: root
+    mode: "0644"
   when: nginx_repo_enable
 - name: Add nginx repo
   ansible.builtin.apt_repository:

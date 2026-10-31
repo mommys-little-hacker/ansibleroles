@@ -3,12 +3,21 @@
   ansible.builtin.file:
     name: /storage
     state: directory
+    owner: root
+    group: root
+    mode: "0755"
 - name: Create docker configuration directory
   ansible.builtin.file:
     name: /etc/docker
     state: directory
+    owner: root
+    group: root
+    mode: "0755"
 - name: Copy Docker daemon config
   ansible.builtin.copy:
     content: "{{ docker_conf | to_nice_json }}"
     dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
   notify: restart docker

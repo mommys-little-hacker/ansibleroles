@@ -5,7 +5,7 @@ driver:
     name: virtualbox
 dependency:
   name: galaxy
-  enabled: yes
+  enabled: true
   role-file: requirements.yml
 lint:
   name: yamllint
@@ -22,7 +22,7 @@ provisioner:
     name: ansible-lint
   connection_options:
     ansible_python_interpreter: /usr/bin/python3
-    ansible_become: yes
+    ansible_become: true
     ansible_become_user: root
     ansible_become_method: sudo
 verifier:

@@ -1,11 +1,13 @@
 ---
 - name: Run pre hook
   ansible.builtin.command: "{{ certbot_standalone_cmd_pre }}"
+  register: certbot_pre_hook_result
   when:
     - certbot_standalone_cmd_pre is defined
     - certbot_standalone_cmd_pre
-  ignore_errors: true
-- name: Get certs # noqa 301 305
+  failed_when: false
+  changed_when: false
+- name: Get certs # noqa no-changed-when command-instead-of-shell
   ansible.builtin.shell: >
     . /opt/certbot/bin/activate
     && certbot certonly
@@ -14,7 +16,7 @@
     --standalone
     --quiet
     --cert-name {{ item.key }}
-    {% for domain in item.value.domains %}-d {{ domain }} {%endfor%}
+    {% for domain in item.value.domains %}-d {{ domain }} {% endfor %}
   with_items: "{{ certbot_standalone | default({}) | dict2items }}"
   retries: 3
   delay: 1
@@ -22,10 +24,12 @@
   until: certbot_standalone_result.rc == 0
 - name: Run post hook
   ansible.builtin.command: "{{ certbot_standalone_cmd_post }}"
+  register: certbot_post_hook_result
   when:
     - certbot_standalone_cmd_post is defined
     - certbot_standalone_cmd_post
-  ignore_errors: true
+  failed_when: false
+  changed_when: false
 - name: Set up certificate renewal
   ansible.builtin.cron:
     name: "cert-renew {{ item.key }}"
@@ -33,11 +37,14 @@
       . /opt/certbot/bin/activate
       && certbot renew
       --cert-name {{ item.key }}
-      {% if item.value.deploy_hook is defined %} --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook
-      }} {% endif %}
-      {% if item.value.pre_hook is defined %} --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }} {% endif
-      %}
-      {% if item.value.post_hook is defined %} --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }}
+      {% if item.value.deploy_hook is defined %}
+      --deploy-hook /etc/letsencrypt/renewal-hooks/deploy/{{ item.value.deploy_hook }}
+      {% endif %}
+      {% if item.value.pre_hook is defined %}
+      --pre-hook /etc/letsencrypt/renewal-hooks/pre/{{ item.value.pre_hook }}
+      {% endif %}
+      {% if item.value.post_hook is defined %}
+      --post-hook /etc/letsencrypt/renewal-hooks/post/{{ item.value.post_hook }}
       {% endif %}
       -q
     minute: "30"
