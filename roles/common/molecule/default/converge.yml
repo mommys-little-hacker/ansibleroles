@@ -24,9 +24,10 @@
       - name: test1
         remove_files: false
   tasks:
-    - name: Edit hostname # noqa 301 305
-      ansible.builtin.shell:
-        cmd: "hostnamectl set-hostname instance.local"
+    - name: Edit hostname
+      ansible.builtin.command:
+        cmd: hostnamectl set-hostname instance.local
+      changed_when: true
     - name: "Include common"
       ansible.builtin.include_role:
         name: "common"

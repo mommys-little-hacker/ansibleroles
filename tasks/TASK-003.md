@@ -1,9 +1,9 @@
 # TASK-006: Исправить ошибки ansible-lint в роли certbot
 
-**Статус:** Тестирование
+**Статус:** Готово
 **Создана:** 2026-10-29 (PM: opencode)
 **Взята в работу:** 2026-10-30 (dev: GLM-5.3-Flash)
-**Завершена:** -
+**Завершена:** 2026-10-31 (QA)
 
 ## Описание
 Устранить замечания `ansible-lint` в роли `certbot`: форматирование YAML-комментариев, длину строк, jinja-пробелы, `ignore-errors` → `failed_when`, `no-changed-when` и устаревшие noqa-теги 301/305.
@@ -29,3 +29,4 @@
 - 2026-10-29 (PM): Владелец выбрал «мягкий» вариант для pre/post hook: сбои hook'ов не прерывают выпуск сертификата, текущее поведение сохранить — `ignore_errors: true` → `failed_when: false` + `changed_when: false`.
 - 2026-10-29 (PM): Тест-кейсы 2, 4, 5 переписаны на статические проверки: репозиторий — чистая коллекция ролей без плейбуков, запускать плейбуки/роли (включая `--check --diff`) и реальные команды (`certbot renew --dry-run`) не требуется (см. `AGENT_CONTEXT.md`). Сравнение команд выполняется текстово, поведение — анализом кода.
 - 2026-10-30 (dev: GLM-5.3-Flash): Все замечания устранены. `defaults/main.yml` — 9 комментариев получили пробел после `#`. Во всех четырёх задачах «Get certs» (`cloudflare/route53/standalone/webroot.yml`) — `# noqa 301 305` → `# noqa no-changed-when command-instead-of-shell`, `{%endfor%}` → `{% endfor %}`. Длинные строки cron `job:` переренесены: каждый `{% if %}`-блок развёрнут на отдельные строки folded-скаляра (12 замечаний `yaml[line-length]`); текстовое сравнение подтвердило идентичность рендера cron-команды до/после (сверка с версией из git). В `standalone.yml` для «Run pre/post hook» применён согласованный «мягкий» вариант: `register` + `failed_when: false` + `changed_when: false` вместо `ignore_errors: true`. Проверки: `yamllint roles/certbot/` — OK; `ansible-lint roles/certbot/` — Passed: 0 failures, 0 warnings (профиль `production`). Логика выпуска сертификатов не менялась. В диффе по роли только правки этой задачи.
+- 2026-10-31 (QA: GLM-5.3-Flash): Тестирование пройдено. Все тест-кейсы выполнены: `ansible-lint`/`yamllint` по проекту — 0 failures, 0 warnings (профиль production); noqa в именованном формате во всех четырёх задачах «Get certs»; `{% endfor %}` с пробелами — рендер команды certonly идентичен исходному; cron-команда renew — текстовое сравнение развёрнутого folded-скаляра с версией из git подтвердило идентичность; pre/post hook в `standalone.yml` — `register` + `failed_when: false` + `changed_when: false` (мягкий вариант по решению владельца). Статус → Готово.

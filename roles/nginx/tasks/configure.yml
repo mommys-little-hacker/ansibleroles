@@ -58,6 +58,7 @@
   with_items: "{{ nginx_basic_auth.users | default({}) | dict2items }}"
   no_log: true
   when: nginx_basic_auth is defined
-- name: Validate configuration # noqa 301 305
-  ansible.builtin.shell:
+- name: Validate configuration
+  ansible.builtin.command:
     cmd: nginx -qt
+  changed_when: false

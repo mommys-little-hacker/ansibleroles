@@ -1,6 +1,6 @@
 # TASK-002: Исправить ошибки ansible-lint в роли nginx и мета-данных коллекции
 
-**Статус:** Тестирование
+**Статус:** Готово
 **Создана:** 2026-10-29 (PM: opencode)
 **Взята в работу:** 2026-10-29 (developer)
 **Завершена:** -
@@ -30,6 +30,7 @@
 5. Содержимое `meta/runtime.yml` валидно: `ansible-galaxy collection build`/`install` не выдаёт ошибок схемы.
 
 ## Комментарии
+- 2026-10-31 (QA: GLM-5.3-Flash): Тестирование пройдено. Все тест-кейсы выполнены: `ansible-lint`/`yamllint` по проекту — 0 failures, 0 warnings (профиль production); handler «Reload nginx» — `nginx -t && nginx -s reload` + `changed_when: true`; схема «Dearmor key» идемпотентна (get_url → dearmor `changed_when: false` → copy в `/etc/apt/keyrings`); `galaxy.yml` без `license`, `meta/runtime.yml` валиден, `CHANGELOG.md` присутствует; `ansible-galaxy collection build` — успешно (`qwertys-roles-1.0.0.tar.gz`); устаревший `# noqa 301 305` в `roles/nginx/tasks/configure.yml` заменён на `command: nginx -qt` + `changed_when: false`. Статус → Готово.
 - 2026-10-29 (PM): Задача создана по результатам прогона `ansible-lint`.
 - 2026-10-29 (PM): Решения владельца: (1) поле `license` в galaxy.yml — удалить (коллекция закрытая, лицензия не имеет смысла); (2) минимальную версию Ansible для `meta/runtime.yml` взять из фактически поддерживаемых ролей (`min_ansible_version` в `roles/*/meta/main.yml`), согласовать с владельцем, если значения расходятся; (3) формат changelog — простой markdown-файл CHANGELOG.md на усмотрение исполнителя.
 - 2026-10-29 (PM): Тест-кейсы 2–3 переписаны на статические проверки: репозиторий — чистая коллекция ролей без плейбуков, запускать плейбуки/роли (включая `--check --diff`) запрещено (см. `AGENT_CONTEXT.md`). Поведение handler'а и идемпотентность проверяются анализом кода, а не прогоном.
@@ -41,3 +42,8 @@
   - `.config/ansible-lint.yml`: в `skip_list` добавлен `galaxy[no-license]` (с явного согласия владельца — после удаления license ansible-lint требует лицензию, для закрытой коллекции она подавлена).
 - 2026-10-29 (developer): Решения владельца в ходе работы: (1) `requires_ansible` поднят до `>=2.15.0` вместо изначальной идеи `>=2.12.0` — ansible-lint (meta-runtime[unsupported-version]) принимает только >=2.15.0…>=2.19.0; (2) подавление `galaxy[no-license]` вместо указания SPDX-лицензии.
 - 2026-10-29 (developer): Проверки: `ansible-lint` по `roles/nginx` + `galaxy.yml` + `meta` — 0 провалов (профиль production, 5/5); `ansible-galaxy collection build`/`install` — без ошибок схемы и предупреждений о changelog/runtime; `yamllint` по изменённым файлам — чисто. Прогон по всему проекту оставшиеся нарушения не даёт по рамкам задачи: они в `certbot` (TASK-003), `docker` (TASK-004, включая molecule-сценарии) и molecule (устаревшие noqa-теги, `roles/nginx/tasks/configure.yml:61` — вне рамок TASK-002, вынесено на усмотрение PM).
+- 2026-10-31 (developer): Доработка по результатам тестирования — устранены 2 оставшихся warning `warning[outdated-tag]` (устаревшие noqa-теги `301`/`305`):
+  - `roles/nginx/tasks/configure.yml` («Validate configuration», `nginx -qt`): вместо обновления noqa-тегов причины устранены по существу — `ansible.builtin.shell` → `ansible.builtin.command` (шелловых конструкций в команде нет) + `changed_when: false` (задача только валидирует конфиг, состояние не меняет); noqa-комментарий удалён.
+  - `roles/common/molecule/default/converge.yml:27` («Edit hostname», `hostnamectl set-hostname`): аналогично — `shell` → `command` + `changed_when: true`; noqa-комментарий удалён. Шаг оставлен (не удалялся) — он задаёт ожидаемое имя хоста инстансу перед прогоном роли `common` в molecule-сценарии.
+  - Важно: molecule-файл правился только статически, molecule-тесты не запускались (ограничение `AGENT_CONTEXT.md`); поведение сценария не менялось (замена `shell`→`command` для команды без шелл-конструкций эквивалентна).
+- 2026-10-31 (developer): Проверки: `ansible-lint` по всему проекту — 0 провалов, 0 warnings (профиль production, 5/5); `yamllint` по изменённым файлам — чисто.
