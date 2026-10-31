@@ -28,6 +28,7 @@
     owner: root
     group: root
     mode: "0644"
+    remote_src: true
   when: nginx_repo_enable
 - name: Add nginx repo
   ansible.builtin.apt_repository:
